@@ -7,6 +7,17 @@ class LinkedList:
         self.tail = new_node
         self.length = 1
 
+    def prepend(self, value):
+        new_node = Node(value)
+        if self.length == 0:
+            self.head = new_node
+            self.tail = new_node
+        else:
+            new_node.next = self.head
+            self.head = new_node
+        self.length += 1
+        return True
+
     def append(self, value):
         new_node = Node(value)
         if self.length == 0:
@@ -47,11 +58,19 @@ my_linked_list.print_list()
 
 print()
 
+print(f'Linked List: Prepend')
+my_linked_list.prepend(500)
+my_linked_list.print_list()
+
+print()
+
 print(f'Linked List: Pop One')
 popped = my_linked_list.pop()
 print(f'Popped {popped.value}')
 print(f'Updated list:')
 my_linked_list.print_list()
+
+print()
 
 print(f'Linked List: Pop All')
 while my_linked_list.length > 0:
