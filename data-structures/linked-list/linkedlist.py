@@ -42,6 +42,16 @@ class LinkedList:
             self.length -= 1
         return temp
 
+    def get(self, value):
+        if self.length == 0:
+            return None
+        current = self.head
+        while current is not None:
+            if current.value == value:
+                return current
+            current = current.next
+        return None
+
     def print_list(self):
         current = self.head
         while current is not None:
@@ -64,6 +74,15 @@ my_linked_list.print_list()
 
 print()
 
+print(f'Linked List: Get')
+print(f'get(500) -> {my_linked_list.get(500).value}')
+print(f'get(11)  -> {my_linked_list.get(11).value}')
+print(f'get(3)   -> {my_linked_list.get(3).value}')
+print(f'get(23)  -> {my_linked_list.get(23).value}')
+print(f'get(7)   -> {my_linked_list.get(7).value}')
+
+print()
+
 print(f'Linked List: Pop One')
 popped = my_linked_list.pop()
 print(f'Popped {popped.value}')
@@ -76,5 +95,5 @@ print(f'Linked List: Pop All')
 while my_linked_list.length > 0:
     popped = my_linked_list.pop()
     print(f'Popped {popped.value}')
-print(f'Updated list:')
+print(f'Updated list after all popped:')
 my_linked_list.print_list()
