@@ -1,11 +1,13 @@
 from node import Node
 
 class LinkedList:
+
     def __init__(self, value):
         new_node = Node(value)
         self.head = new_node
         self.tail = new_node
         self.length = 1
+
 
     def prepend(self, value):
         new_node = Node(value)
@@ -18,6 +20,7 @@ class LinkedList:
         self.length += 1
         return True
 
+
     def append(self, value):
         new_node = Node(value)
         if self.length == 0:
@@ -28,6 +31,7 @@ class LinkedList:
             self.tail = new_node
         self.length += 1
         return True
+
 
     def pop(self):
         if self.length == 0:
@@ -42,15 +46,35 @@ class LinkedList:
             self.length -= 1
         return temp
 
-    def get(self, value):
+
+    '''
+    Search for a value in the linked list.
+
+    Returns a tuple containing the node and its index if found, otherwise returns (None, -1).
+    '''
+    def search(self, value) -> tuple:
         if self.length == 0:
-            return None
+            return (None, -1)            
         current = self.head
+        index = 0
         while current is not None:
             if current.value == value:
-                return current
+                return (current, index)
             current = current.next
-        return None
+            index += 1
+        return (None, -1)
+
+    
+    def get(self, index):
+        if self.length == 0 or index < 0 or index >= self.length:
+            return None
+        current = self.head
+        position = 0
+        while current is not None and position < index:
+            current = current.next
+            position += 1
+        return current
+        
 
     def print_list(self):
         current = self.head
@@ -74,12 +98,21 @@ my_linked_list.print_list()
 
 print()
 
+print(f'Linked List: Search')
+print(f'search(500) -> {my_linked_list.search(500)[0].value}')
+print(f'search(11)  -> {my_linked_list.search(11)[0].value}')
+print(f'search(3)   -> {my_linked_list.search(3)[0].value}')
+print(f'search(23)  -> {my_linked_list.search(23)[0].value}')
+print(f'search(7)   -> {my_linked_list.search(7)[0].value}')
+
+print()
+
 print(f'Linked List: Get')
-print(f'get(500) -> {my_linked_list.get(500).value}')
-print(f'get(11)  -> {my_linked_list.get(11).value}')
-print(f'get(3)   -> {my_linked_list.get(3).value}')
-print(f'get(23)  -> {my_linked_list.get(23).value}')
-print(f'get(7)   -> {my_linked_list.get(7).value}')
+print(f'get(0) -> {my_linked_list.get(0).value}')
+print(f'get(1) -> {my_linked_list.get(1).value}')
+print(f'get(2) -> {my_linked_list.get(2).value}')
+print(f'get(3) -> {my_linked_list.get(3).value}')
+print(f'get(4) -> {my_linked_list.get(4).value}')
 
 print()
 
