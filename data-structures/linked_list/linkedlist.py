@@ -114,8 +114,7 @@ class LinkedList:
         temp.next = temp.next.next
         return True
         
-
-
+    ### TODO: Finish this method
     def reverse(self):
         pass
 
@@ -129,6 +128,7 @@ class LinkedList:
         print(to_print)
 
 
+### TODO: Convert to unit tests
 print(f'Linked List: Append 11->3->23->7')
 my_linked_list = LinkedList(11)
 my_linked_list.append(3)
