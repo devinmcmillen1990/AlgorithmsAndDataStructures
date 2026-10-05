@@ -1,0 +1,142 @@
+[
+  {
+    "name": "single_pair",
+    "input": "()",
+    "expected": 1
+  },
+  {
+    "name": "two_adjacent_pairs",
+    "input": "()()",
+    "expected": 2
+  },
+  {
+    "name": "three_adjacent_pairs",
+    "input": "()()()",
+    "expected": 3
+  },
+  {
+    "name": "two_nested_pairs",
+    "input": "(())",
+    "expected": 2
+  },
+  {
+    "name": "three_nested_pairs",
+    "input": "((()))",
+    "expected": 4
+  },
+  {
+    "name": "five_nested_pairs",
+    "input": "((((()))))",
+    "expected": 16
+  },
+  {
+    "name": "two_children_inside",
+    "input": "(()())",
+    "expected": 4
+  },
+  {
+    "name": "three_children_inside",
+    "input": "(()()())",
+    "expected": 6
+  },
+  {
+    "name": "deeper_sibling_groups",
+    "input": "((())(()))",
+    "expected": 8
+  },
+  {
+    "name": "shallow_then_deep",
+    "input": "(()(()))",
+    "expected": 6
+  },
+  {
+    "name": "deep_then_shallow",
+    "input": "((())())",
+    "expected": 6
+  },
+  {
+    "name": "leaf_then_group",
+    "input": "()(())",
+    "expected": 3
+  },
+  {
+    "name": "group_then_leaf",
+    "input": "(())()",
+    "expected": 3
+  },
+  {
+    "name": "repeated_wrapped_groups",
+    "input": "(())(())",
+    "expected": 4
+  },
+  {
+    "name": "mixed_top_level_groups",
+    "input": "()(())((()))",
+    "expected": 7
+  },
+  {
+    "name": "surrounded_group",
+    "input": "()(()())()",
+    "expected": 6
+  },
+  {
+    "name": "nested_siblings_twice",
+    "input": "((()()))",
+    "expected": 8
+  },
+  {
+    "name": "asymmetric_nested_mix",
+    "input": "(()((())))",
+    "expected": 10
+  },
+  {
+    "name": "multiple_mixed_groups",
+    "input": "(()())(())(()(()))",
+    "expected": 12
+  },
+  {
+    "name": "max_length_flat",
+    "input": "()()()()()()()()()()()()()()()()()()()()()()()()()",
+    "expected": 25
+  },
+  {
+    "name": "max_length_nested",
+    "input": "((((((((((((((((((((((((()))))))))))))))))))))))))",
+    "expected": 16777216
+  },
+  {
+    "name": "max_length_many_children",
+    "input": "(()()()()()()()()()()()()()()()()()()()()()()()())",
+    "expected": 48
+  },
+  {
+    "name": "max_length_deep_then_leaf",
+    "input": "(((((((((((((((((((((((())))))))))))))))))))))))()",
+    "expected": 8388609
+  },
+  {
+    "name": "max_length_leaf_then_deep",
+    "input": "()(((((((((((((((((((((((())))))))))))))))))))))))",
+    "expected": 8388609
+  },
+  {
+    "name": "max_length_deep_two_leaves",
+    "input": "(((((((((((((((((((((((()())))))))))))))))))))))))",
+    "expected": 16777216
+  },
+  {
+    "name": "max_length_two_nested_groups",
+    "input": "(((((((((((())))))))))))((((((((((((()))))))))))))",
+    "expected": 6144
+  },
+  {
+    "name": "max_length_two_nested_children",
+    "input": "((((((((((((())))))))))))(((((((((((()))))))))))))",
+    "expected": 8192
+  },
+  {
+    "name": "max_length_repeated_branching",
+    "input": "(()())(()())(()())(()())(()())(()())(()())(()())()",
+    "expected": 33
+  }
+]
