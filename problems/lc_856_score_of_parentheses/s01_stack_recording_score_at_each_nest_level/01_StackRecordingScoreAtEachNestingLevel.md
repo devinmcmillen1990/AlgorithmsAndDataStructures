@@ -8,7 +8,7 @@ Whenever we open a pair of parentheses, start tracking a new score. When we clos
 
 <h2>Code</h2>
 
-'''python
+```python
 class Solution:
     def scoreOfParentheses(self, s: str) -> int:
         stack = [0]                         # Set first entry to '0'. This will track the score of the whole expression
@@ -23,7 +23,7 @@ class Solution:
                     group_score = 2 * inner # wrapping nonempty group to its parent's score
                 stack[-1] += group_score    # add this completed group to its parent's score
         return stack[0]
-'''
+```
 
 <h2>Time Complexity : </h2> 
 

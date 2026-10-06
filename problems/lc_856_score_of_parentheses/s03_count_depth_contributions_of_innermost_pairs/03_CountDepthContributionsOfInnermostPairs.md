@@ -21,7 +21,7 @@ When there are multiple innermost pairs, we add their contributions
 
 <h2>Code</h2>
 
-'''python
+```python
 class Solution:
     def scoreOfParentheses(self, s: str) -> int:
         score = 0
@@ -34,7 +34,7 @@ class Solution:
                 if i > 0 and s[i-1] == '(': # if the previous char is '(' then we add to the score based on the depth
                     score += 1 << depth     # since its 2^(# of enclosing pairs) - Shift bits based on depth
         return score
-'''
+```
 
 <h2>Time Complexity : </h2> 
 

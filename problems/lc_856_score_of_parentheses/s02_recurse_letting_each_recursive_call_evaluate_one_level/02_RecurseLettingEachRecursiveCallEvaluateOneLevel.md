@@ -12,7 +12,7 @@ Whenever it sees '(', it class itself to evaluate the contents.
 
 <h2>Code</h2>
 
-'''python
+```python
 class Solution:
     def scoreOfParentheses(self, s: str) -> int:
         index = 0
@@ -29,7 +29,7 @@ class Solution:
                     total += 2 * inner
             return total                                # return recursive iteration's total.
         return parse()
-'''
+```
 
 <h2>Time Complexity : </h2> 
 
