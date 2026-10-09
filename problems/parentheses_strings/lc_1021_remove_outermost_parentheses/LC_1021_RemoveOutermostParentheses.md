@@ -5,5 +5,9 @@
 
 <h2>Solutions</h2>
 
-1. [Depth Counter](./s01_counting_open_and_close_parentheses/Solution.md)
+1. [Depth Counter](./s01_depth_counter/Solution.md)
 2. [Stack Solution](./s02_track_lowest_prefix_balance/Solution.md)
+
+<h2>Commands</h2>
+
+```python3 tests.py```
