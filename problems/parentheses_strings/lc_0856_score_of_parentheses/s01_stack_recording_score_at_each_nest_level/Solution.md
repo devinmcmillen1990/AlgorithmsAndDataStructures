@@ -40,3 +40,5 @@ class Solution:
     <li>Strings</li>
     <li>Stack</li>
 </ul>
+
+[Back to Problem](../LC_856_ScoreOfParentheses.md)
