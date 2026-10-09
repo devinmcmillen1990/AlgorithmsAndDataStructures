@@ -1,0 +1,103 @@
+[
+  {
+    "name": "single_opening",
+    "input": "(",
+    "expected": 2
+  },
+  {
+    "name": "single_closing",
+    "input": ")",
+    "expected": 2
+  },
+  {
+    "name": "closing_pair_without_opening",
+    "input": "))",
+    "expected": 1
+  },
+  {
+    "name": "odd_closing_run",
+    "input": ")))))",
+    "expected": 4
+  },
+  {
+    "name": "even_closing_run",
+    "input": "))))))",
+    "expected": 3
+  },
+  {
+    "name": "only_openings",
+    "input": "(((((",
+    "expected": 10
+  },
+  {
+    "name": "already_balanced_single_group",
+    "input": "())",
+    "expected": 0
+  },
+  {
+    "name": "already_balanced_adjacent_groups",
+    "input": "())())",
+    "expected": 0
+  },
+  {
+    "name": "already_balanced_nested_group",
+    "input": "(())))",
+    "expected": 0
+  },
+  {
+    "name": "already_balanced_nested_siblings",
+    "input": "(())())))",
+    "expected": 0
+  },
+  {
+    "name": "nested_group_missing_one_closing",
+    "input": "(()))",
+    "expected": 1
+  },
+  {
+    "name": "extra_closing_after_balanced_group",
+    "input": "()))",
+    "expected": 2
+  },
+  {
+    "name": "odd_pair_interrupted_by_opening",
+    "input": "()())",
+    "expected": 1
+  },
+  {
+    "name": "correct_totals_but_wrong_pairing",
+    "input": "()()))",
+    "expected": 3
+  },
+  {
+    "name": "closing_before_opening",
+    "input": ")(",
+    "expected": 4
+  },
+  {
+    "name": "closings_before_openings",
+    "input": "))((",
+    "expected": 5
+  },
+  {
+    "name": "leading_closing_then_balanced_group",
+    "input": ")())",
+    "expected": 2
+  },
+  {
+    "name": "balanced_group_then_unclosed_opening",
+    "input": "())(",
+    "expected": 2
+  },
+  {
+    "name": "leading_closing_pair_and_trailing_opening",
+    "input": "))())(",
+    "expected": 3
+  },
+  {
+    "name": "repeated_reversed_pairs",
+    "input": ")()()(",
+    "expected": 6
+  }
+]
+
