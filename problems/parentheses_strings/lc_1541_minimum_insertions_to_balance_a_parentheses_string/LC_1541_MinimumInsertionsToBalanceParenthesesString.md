@@ -9,5 +9,5 @@
 2. [Greedy that Explicitly Comsumes '))'](./s02_greedy_that_explicitly_consumes_closing_pairs/Solution.md)
 
 <h2>Commands</h2>
-```python3 tests.py```
 
+```python3 tests.py```

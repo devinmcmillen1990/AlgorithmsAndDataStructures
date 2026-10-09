@@ -9,4 +9,6 @@
 3. [Count depth contributions of innermost pairs](./s03_count_depth_contributions_of_innermost_pairs/Solution.md)
 
 <h2>Commands</h2>
+
 ```python3 tests.py```
+
