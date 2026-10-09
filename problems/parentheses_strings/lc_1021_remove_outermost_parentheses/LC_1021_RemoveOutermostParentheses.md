@@ -6,7 +6,7 @@
 <h2>Solutions</h2>
 
 1. [Depth Counter](./s01_depth_counter/Solution.md)
-2. [Stack Solution](./s02_track_lowest_prefix_balance/Solution.md)
+2. [Stack Solution](./s02_stack_solution/Solution.md)
 
 <h2>Commands</h2>
 
