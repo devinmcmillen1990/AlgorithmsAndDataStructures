@@ -18,16 +18,16 @@ We will record the current character in a string if
 class Solution:
     def removeOuterParentheses(self, s: str) -> str:
         result = []
-        depth = 0                       # Used to track how many parentheses are currently unmatched
+        stack = []
         for char in s:
-            if char == '(':             # Encounter '(' - Opening
-                if depth > 0:           # check depth before (++) depth. means we have already seen a '('
-                    result.append(char) # append '(' because this parenthesis is nested because depth > 0
-                depth += 1              # (++) depth each iteration we encounter '('
-            else:                       # Encounter ')' - Closing
-                depth -= 1              # (--) depth each iteration we encounter ')'
-                if depth > 0:           # check depth after incrementing. if depth is 0 then this ')' closes the final parenthesis
-                    result.append(char) # append ')' to the output result
+            if char == '(':             # Encountered '(' - Opening
+                if stack:               # non-empty stack -> detected nesting
+                    result.append(char) # append '(' to result because this parenthesis is nested
+                stack.append(char)      # append '(' to stack for each encounter
+            else:                       # Encountered ')' - Closing
+                stack.pop()             # pop last char from stack
+                if stack:               # non-empty stack -> detected nesting
+                    result.append(char) # append ')' to result because this parentheis closes the previous one and is nested
         return "".join(result)
 ```
 
@@ -37,7 +37,7 @@ class Solution:
 
 <h2>Space Complexity : </h2> 
 
-<strong>O(1)</strong>, only counters are storing data
+<strong>O(n)</strong>, because the stack recorcds '('
 
 <h2>Categories</h2>
 
