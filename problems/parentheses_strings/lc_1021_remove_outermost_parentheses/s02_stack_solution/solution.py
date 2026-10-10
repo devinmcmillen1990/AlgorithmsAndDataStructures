@@ -41,7 +41,7 @@ Iteration 4 - ')'
 Iteration 5 - '('
     1. enter if block because char == '('
         a. skip if block because stack is empty [currently stack == [] ]
-        b. append '(' to stack
+        b. append '(' to stack [currently stack == ['(']]
 
 Iteration 6 - ')'
     1. enter else block because char != '('
@@ -79,7 +79,7 @@ Iteration 4 - '('
             -- append '(' to result because we are in a nesting [currently result = ['(', ')', '('] ]
         b. append '(' to stack [currently stack == ['(', '('] ]
 
-Iteration 5 - ')'
+Iteration 5 - ')' 
     1. enter else block because char != '('
         a. pop from stack [currently stack = ['('] ]
         b. enter if block because stack is not empty
