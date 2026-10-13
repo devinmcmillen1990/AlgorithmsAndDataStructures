@@ -167,12 +167,13 @@ class TestLinkedList(unittest.TestCase):
 
     def test_missing_values(self) -> None:
         for values in ([], [10, 20]):
-            for method in ("index", "remove"):
-                with self.subTest(values=values, method=method):
-                    linked = LinkedList(values)
-                    with self.assertRaises(ValueError):
-                        getattr(linked, method)(99)
-                    self.assert_list(linked, values)
+            with self.subTest(values=values):
+                linked = LinkedList(values)
+                self.assertIsNone(linked.index(99))
+                self.assert_list(linked, values)
+                with self.assertRaises(ValueError):
+                    linked.remove(99)
+                self.assert_list(linked, values)
 
     def test_clear(self) -> None:
         for values in ([], [10], [10, 20, 30]):
