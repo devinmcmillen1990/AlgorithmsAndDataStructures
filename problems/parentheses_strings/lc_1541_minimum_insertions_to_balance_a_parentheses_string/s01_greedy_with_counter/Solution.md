@@ -1,8 +1,8 @@
-<h1>1. Greedy With Counter</h2>
+# 1. Greedy With Counter
 
 [Back to Problem](../LC_1541_MinimumInsertionsToBalanceParenthesesString.md)
 
-<h2>Idea</h2>
+## Idea
 
 Keep two counters
 1. ```needed``` - how many additional ```)``` characters the processed portion still needs
@@ -12,7 +12,7 @@ Keep two counters
 
 The tricky part is hanlding an unfinished ```))``` pair before another ```(``` appears.
 
-<h2>Code</h2>
+## Code
 
 ```python
 class Solution:
@@ -33,15 +33,15 @@ class Solution:
         return insertions + needed  # return (insertions made) + (number of needed ')')
 ```
 
-<h2>Time Complexity : </h2> 
+## Time Complexity 
 
 <strong>O(n)</strong>, because each character is processed once
 
-<h2>Space Complexity : </h2> 
+## Space Complexity
 
 <strong>O(1)</strong>, only counters are storing data
 
-<h2>Categories</h2>
+## Categories
 
 <ul>
     <li>Array</li>

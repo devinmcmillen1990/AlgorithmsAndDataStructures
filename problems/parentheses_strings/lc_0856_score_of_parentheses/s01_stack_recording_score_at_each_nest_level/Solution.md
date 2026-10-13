@@ -1,12 +1,12 @@
-<h1>1. Stack Recording Score at each Nesting Level</h2>
+# 1. Stack Recording Score at each Nesting Level
 
 [Back to Problem](../LC_856_ScoreOfParentheses.md)
 
-<h2>Idea</h2>
+## Idea
 
 Whenever we open a pair of parentheses, start tracking a new score. When we close it, calculate that group's score and add it to its parent.
 
-<h2>Code</h2>
+## Code
 
 ```python
 class Solution:
@@ -25,15 +25,15 @@ class Solution:
         return stack[0]
 ```
 
-<h2>Time Complexity : </h2> 
+## Time Complexity
 
 <strong>O(n)</strong>, because each character is processed once
 
-<h2>Space Complexity : </h2> 
+## Space Complexity
 
 <strong>O(h)</strong>, where 'h' is the maximum nesting depth; O(n) in the worst case
 
-<h2>Categories</h2>
+## Categories
 
 <ul>
     <li>Array</li>

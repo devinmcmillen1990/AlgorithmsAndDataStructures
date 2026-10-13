@@ -1,8 +1,8 @@
-<h1>1. Max Heap</h2>
+# 1. Max Heap
 
 [Back to Problem](../LC_2333_MinimumSumOfSquareDifferences.md)
 
-<h2>Idea</h2>
+## Idea
 
 Instead of squaring everytime we can keep track of the absolute value and square at the end.
 
@@ -12,7 +12,7 @@ We will load the differences into a <strong>Max Heap</strong> and we keep making
 
 <strong>Important limitation:</strong> this version is correct, but not suitable for the worst-case constraints. Each individual budget can reach \(10^9\), so processing one operation per iteration can require billions of iterations.
 
-<h2>Code</h2>
+## Code
 
 ```python
 import heapq
@@ -36,15 +36,15 @@ class Solution:
 
 ```
 
-<h2>Time Complexity : </h2> 
+## Time Complexity
 
 <strong>O(n + Klog(n))</strong>, ```n``` is the size of the heap and ```K``` is the number of possible edits after combining ```k1+k2```
 
-<h2>Space Complexity : </h2> 
+## Space Complexity
 
 <strong>O(n)</strong>, for the heap
 
-<h2>Categories</h2>
+## Categories
 
 <ul>
     <li>Array</li>

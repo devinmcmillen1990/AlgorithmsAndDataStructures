@@ -1,0 +1,158 @@
+from __future__ import annotations
+
+from collections.abc import Iterable, Iterator
+from reprlib import recursive_repr
+from typing import Any
+
+from doubly_linked.node import DoublyLinkedNode
+
+
+class DoublyLinkedList:
+
+    def __init__(self, values: Iterator[Any]) -> None:
+        self._head: DoublyLinkedNode|None = None
+        self._tail: DoublyLinkedNode|None = None
+        self._size = 0
+        for value in values:
+            self.append(value=value)
+
+    def prepend(self, value: Any) -> None:
+        node = DoublyLinkedNode(value=value, next=self._head)
+        if self._head is None:
+            self._tail = node
+        else:
+            self._head.prev = node
+        self._head = node
+        self._size += 1
+
+    def append(self, value: Any) -> None:
+        node = DoublyLinkedNode(value=value, prev=self._tail)
+        if self._tail is None:
+            self._head = node
+        else:
+            self._tail.next = node
+        self._tail = node
+        self._size += 1
+
+    def insert(self, index: int, value: Any) -> None:
+        index = self._normalize_index(index=index, for_insert=True)
+        if index == 0:
+            self.prepend(value=value)
+        elif index == self._size:
+            self.append(value=value)
+        else:
+            following = self._node_at(index=index)
+            previous = following.prev
+            assert previous is not None
+            node = DoublyLinkedNode(value=value, next=following, prev=previous)
+            previous.next = node
+            following.prev = node
+            self._size += 1
+
+    def extend(self, values: Iterable[Any]) -> None:
+        if values is self:
+            values = list(self)
+        for value in values:
+            self.append(value=value)
+
+    def index(self, value: Any) -> int | None:
+        node = self._head
+        index = 0
+        while node is not None:
+            if node.value is value or node.value == value:
+                return index
+            node = node.next
+            index += 1
+        return None
+
+    def count(self, value: Any) -> int:
+        return sum(1 for item in self if item is value or item == value)
+
+    def pop(self, index: int = -1) -> Any:
+        node = self._node_at(index)
+        if node.prev is None:
+            self._head = node.next
+        else:
+            node.prev.next = node.next
+        if node.next is None:
+            self._tail = node.prev
+        else:
+            node.next.prev = node.prev
+        self._size -= 1
+        node.prev = None
+        node.next = None
+        return node.value
+
+    def remove(self, value: Any) -> None:
+        index = self.index(value)
+        if index is None:
+            raise ValueError(f"{value!r} is not in the linked list")
+        self.pop(index=index)
+
+    def clear(self) -> None:
+        while self._head is not None:
+            self.pop(0)
+
+    def reverse(self) -> DoublyLinkedList:
+        reversed_list = DoublyLinkedList()
+        for value in self:
+            reversed_list.prepend(value=value)
+        return reversed_list
+
+    def _normalize_index(self, index: int, *, for_insert: bool = False) -> int:
+        if not isinstance(index, int):
+            raise ValueError("index must be an integer; slicing is not supported")
+        if for_insert:
+            if index < 0:
+                index += self._size
+            return max(0, min(index, self._size))
+        if index < -self._size or index >= self._size:
+            raise IndexError("linked list index out of range")
+        return index if index >= 0 else index + self._size
+
+    def _node_at(self, index: int) -> DoublyLinkedNode:
+        index = self._normalize_index(index=index)
+        if index < self._size // 2:
+            node = self._head
+            for _ in range(index):
+                assert node is not None
+                node = node.next
+        else:
+            node = self._tail
+            for _ in range(self._size-1-index):
+                assert node is not None
+                node = node.prev
+        assert node is not None
+        return node
+
+    def __len__(self) -> int:
+        return self._size
+
+    def __iter__(self) -> Iterator[Any]:
+        node = self._head
+        while node is not None:
+            yield node.value
+            node = node.next
+
+    def __reversed__(self) -> Iterator[Any]:
+        node = self._tail
+        while node is not None:
+            yield node.value
+            node = node.prev
+
+    def __contains__(self, value: Any) -> bool:
+        return any(item is value or item == value for item in self)
+
+    def __getitem__(self, index: int) -> Any:
+        return self._node_at(index=index).value
+
+    def __setitem__(self, index: int, value: Any) -> None:
+        self._node_at(index=index).value = value
+
+    def __delitem__(self, index: int) -> None:
+        self.pop(index=index)
+
+    @recursive_repr
+    def __repr__(self):
+        return f"DoublyLinkedList({list(self)!r})"
+        

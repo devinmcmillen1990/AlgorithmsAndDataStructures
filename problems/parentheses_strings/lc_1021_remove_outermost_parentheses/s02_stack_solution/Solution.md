@@ -1,8 +1,8 @@
-<h1>1. Stack Solution</h2>
+# 1. Stack Solution
 
 [Back to Problem](../LC_1021_RemoveOutermostParentheses.md)
 
-<h2>Idea</h2>
+## Idea
 
 Similar to the last solution, except we use the length of the stack to determine if we should record inner parenthesis.
 
@@ -12,7 +12,7 @@ We will record the current character in a string if
 * we see a ```)``` and the ```stack``` is not empty after popping
   * we record at this point because after a pop if the ```stack``` is not empty then we are in a nesting.
 
-<h2>Code</h2>
+## Code
 
 ```python
 class Solution:
@@ -31,19 +31,20 @@ class Solution:
         return "".join(result)
 ```
 
-<h2>Time Complexity : </h2> 
+## Time Complexity
 
 <strong>O(n)</strong>, because each character is processed once
 
-<h2>Space Complexity : </h2> 
+## Space Complexity
 
 <strong>O(n)</strong>, because the stack recorcds '('
 
-<h2>Categories</h2>
+## Categories
 
 <ul>
     <li>Array</li>
     <li>Strings</li>
+    <li>Stack</li>
 </ul>
 
 [Back to Problem](../LC_1021_RemoveOutermostParentheses.md)

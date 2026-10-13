@@ -1,8 +1,8 @@
-<h1>3. Count Depth Contributions of Innermost Pairs</h2>
+# 3. Count Depth Contributions of Innermost Pairs
 
 [Back to Problem](../LC_856_ScoreOfParentheses.md)
 
-<h2>Idea</h2>
+## Idea
 
 This solution removes the stack entirely. 
 
@@ -19,7 +19,7 @@ Therefore, contribution of an innermost pair = 2^(number of enclosing pairs)
 
 When there are multiple innermost pairs, we add their contributions
 
-<h2>Code</h2>
+# Code
 
 ```python
 class Solution:
@@ -36,15 +36,15 @@ class Solution:
         return score
 ```
 
-<h2>Time Complexity : </h2> 
+## Time Complexity
 
 <strong>O(n)</strong>, because each character is processed once
 
-<h2>Space Complexity : </h2> 
+## Space Complexity
 
 <strong>O(1)</strong>, no extra space required outside of the 2 integers
 
-<h2>Categories</h2>
+## Categories
 
 <ul>
     <li>Array</li>

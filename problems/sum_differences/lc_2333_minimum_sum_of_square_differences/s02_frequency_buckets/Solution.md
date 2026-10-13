@@ -1,8 +1,8 @@
-<h1>2. Frequency Buckets</h2>
+# 2. Frequency Buckets
 
 [Back to Problem](../LC_2333_MinimumSumOfSquareDifferences.md)
 
-<h2>Idea</h2>
+## Idea
 
 1. First, we need to get ```max_diff``` that will be used to determine the number of indexes for our frequency buckets
    -- We'll also use ```total_diff``` to gather the total number of edits and return 0 if there are more edits than we need to get a minimum square sum.
@@ -18,7 +18,7 @@
    -- if we run out of edits, ```k```, then we stop
 5. We'll then square all the values in counts and multiply them by the counts that we have after making these edits.
    
-<h2>Code</h2>
+## Code
 
 ```python
 class Solution:
@@ -48,15 +48,15 @@ class Solution:
         )
 ```
 
-<h2>Time Complexity : </h2> 
+## Time Complexity
 
 <strong>O(n+m)</strong>, where ```n``` is the length of ```num1``` or ```nums2```, and ```m``` is the absolute value for the max difference between elements in ```nums1``` and ```nums2```
 
-<h2>Space Complexity : </h2> 
+## Space Complexity
 
 <strong>O(m+1)</strong>, where ```m``` is the absolute value max difference
 
-<h2>Categories</h2>
+## Categories
 
 <ul>
     <li>Array</li>

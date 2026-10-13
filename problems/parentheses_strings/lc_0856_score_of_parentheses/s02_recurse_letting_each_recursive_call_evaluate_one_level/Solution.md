@@ -1,8 +1,8 @@
-<h1>2. Recurse, Letting each Recursive Call Evaluate One Level</h2>
+# 2. Recurse, Letting each Recursive Call Evaluate One Level
 
 [Back to Problem](../LC_856_ScoreOfParentheses.md)
 
-<h2>Idea</h2>
+## Idea
 
 This follows the same idea as the stack but uses nested function calls instead of an explicit stack.
 
@@ -10,7 +10,7 @@ We will need a helper function that will add up groups at its current level, sto
 
 Whenever it sees '(', it class itself to evaluate the contents.
 
-<h2>Code</h2>
+## Code
 
 ```python
 class Solution:
@@ -31,15 +31,15 @@ class Solution:
         return parse()
 ```
 
-<h2>Time Complexity : </h2> 
+## Time Complexity
 
 <strong>O(n)</strong>, because the shared index only moves forward
 
-<h2>Space Complexity : </h2> 
+## Space Complexity
 
 <strong>O(h)</strong>, where 'h' is the maximum nesting depth (recursive call depth)
 
-<h2>Categories</h2>
+## Categories
 
 <ul>
     <li>Array</li>

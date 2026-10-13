@@ -1,8 +1,8 @@
-<h1>1. Depth Counter</h2>
+# 1. Depth Counter
 
 [Back to Problem](../LC_1021_RemoveOutermostParentheses.md)
 
-<h2>Idea</h2>
+## Idea
 
 Key concept is to track how many ```(``` are currently unmatched.
 
@@ -12,7 +12,7 @@ We will record the current character in the string if
 * we see a ```)``` and ```depth > 0```
   * we record at this point because when entering this block the depth would have to be 1 or more meaning that this current ```)``` is part of an inner pair
 
-<h2>Code</h2>
+## Code
 
 ```python
 class Solution:
@@ -31,15 +31,15 @@ class Solution:
         return "".join(result)
 ```
 
-<h2>Time Complexity : </h2> 
+## Time Complexity
 
 <strong>O(n)</strong>, because each character is processed once
 
-<h2>Space Complexity : </h2> 
+## Space Complexity
 
 <strong>O(1)</strong>, only counters are storing data
 
-<h2>Categories</h2>
+## Categories
 
 <ul>
     <li>Array</li>
