@@ -46,8 +46,6 @@ class TestLinkedList(unittest.TestCase):
         self.assertEqual(list(islice(linked, len(expected) + 1)), expected)
         return nodes
 
-    # ----- Construction and adding values -----
-
     def test_node(self) -> None:
         last = Node(20)
         first = Node(10, last)
@@ -128,8 +126,6 @@ class TestLinkedList(unittest.TestCase):
                     self.assertIsNone(linked.extend(linked))
                 self.assert_list(linked, values + values)
 
-    # ----- Removing values -----
-
     def test_pop_default(self) -> None:
         linked = LinkedList([10, 20, 30])
         for value, expected in ((30, [10, 20]), (20, [10]), (10, [])):
@@ -201,8 +197,6 @@ class TestLinkedList(unittest.TestCase):
                 linked.append(30)
                 self.assert_list(linked, [5, 20, 30])
 
-    # ----- Searching -----
-
     def test_index(self) -> None:
         values = [10, 20, 20, 30, None]
         linked = LinkedList(values)
@@ -240,8 +234,6 @@ class TestLinkedList(unittest.TestCase):
         self.assertIsNone(linked.remove(equal_value))
         self.assert_list(linked, [])
 
-    # ----- Reversal: a new shallow copy, not an in-place operation -----
-
     def test_reverse(self) -> None:
         for values in ([], [10], [10, 20, 30], [10, 20, 10]):
             with self.subTest(values=values):
@@ -278,8 +270,6 @@ class TestLinkedList(unittest.TestCase):
         result[0]["score"] = 99  # Mutate the shared value, not a node.
         self.assert_list(original, [{"score": 10}, {"score": 99}])
         self.assert_list(result, [{"score": 99}, {"score": 10}])
-
-    # ----- Python interfaces -----
 
     def test_len_and_truthiness(self) -> None:
         linked = LinkedList()
@@ -356,8 +346,6 @@ class TestLinkedList(unittest.TestCase):
         linked = LinkedList()
         linked.append(linked)
         self.assertEqual(repr(linked), "LinkedList([...])")
-
-    # ----- Internal helpers and invalid inputs -----
 
     def test_normalize_index(self) -> None:
         linked = LinkedList([10, 20, 30])
