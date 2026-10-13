@@ -7,14 +7,14 @@ from pathlib import Path
 from unittest.mock import patch
 
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
+PROJECT_ROOT = Path(__file__).resolve().parents[3]
 
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 
-from data_structures.linked_list.linkedlist import LinkedList
-from data_structures.linked_list.node import Node
+from data_structures.linked_lists.singly_linked.linkedlist import LinkedList
+from data_structures.linked_lists.singly_linked.node import Node
 
 
 class TestLinkedList(unittest.TestCase):
