@@ -6,33 +6,28 @@ from itertools import islice
 from pathlib import Path
 from unittest.mock import patch
 
-
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
 
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-
 from data_structures.linked_lists.singly_linked.linkedlist import SinglyLinkedList
-from data_structures.linked_lists.singly_linked.node import SinglyLinkedNode
+from data_structures.linked_lists.singly_linked.node import Node
 
 
-class TestLinkedList(unittest.TestCase):
-    def assert_list(self, linked: SinglyLinkedList, expected: list) -> list[SinglyLinkedNode]:
-        """Check the values AND the chain, length, head, and tail."""
+class TestSinglyLinkedList(unittest.TestCase):
+    def assert_list(self, linked: SinglyLinkedList, expected: list) -> list[Node]:
+        """Check values, endpoints, length, and links; return the actual nodes."""
         self.assertIsInstance(linked, SinglyLinkedList)
-        nodes = []
-        seen = set()
+        nodes, seen = [], set()
         current = linked._head
-
-        # Check links first: a cycle should fail, not make this check loop.
         while current is not None:
-            self.assertNotIn(id(current), seen, "Cycle detected in node links")
-            self.assertLess(len(nodes), len(expected), "Too many linked nodes")
+            self.assertNotIn(id(current), seen, "Cycle in next links")
+            self.assertLess(len(nodes), len(expected), "Too many nodes")
+            self.assertIsInstance(current, Node)
             seen.add(id(current))
             nodes.append(current)
             current = current.next
-
         self.assertEqual([node.value for node in nodes], expected)
         self.assertEqual(linked._size, len(expected))
         self.assertEqual(len(linked), len(expected))
@@ -40,19 +35,19 @@ class TestLinkedList(unittest.TestCase):
         self.assertIs(linked._head, nodes[0] if nodes else None)
         self.assertIs(linked._tail, nodes[-1] if nodes else None)
         if nodes:
-            self.assertIsNone(linked._tail.next)
-
-        # Limit iteration in case a rewritten __iter__ repeatedly yields values.
+            self.assertIsNone(nodes[-1].next)
         self.assertEqual(list(islice(linked, len(expected) + 1)), expected)
         return nodes
 
-    def test_node(self) -> None:
-        last = SinglyLinkedNode(20)
-        first = SinglyLinkedNode(10, last)
+    def test_node_constructor(self) -> None:
+        last = Node(30)
+        first = Node(10, last)
         self.assertEqual(first.value, 10)
         self.assertIs(first.next, last)
-        self.assertEqual(last.value, 20)
+        self.assertEqual(last.value, 30)
         self.assertIsNone(last.next)
+        payload = {"score": 10}
+        self.assertIs(Node(payload).value, payload)
 
     def test_constructor(self) -> None:
         self.assert_list(SinglyLinkedList(), [])
@@ -61,14 +56,26 @@ class TestLinkedList(unittest.TestCase):
                 self.assert_list(SinglyLinkedList(values), values)
 
     def test_constructor_accepts_iterables(self) -> None:
-        sources = (
-            (10, 20, 30),
-            (value for value in [10, 20, 30]),
-            SinglyLinkedList([10, 20, 30]),
-        )
-        for source in sources:
+        for source in ((10, 20), (x for x in (10, 20)), SinglyLinkedList([10, 20])):
             with self.subTest(source_type=type(source).__name__):
-                self.assert_list(SinglyLinkedList(source), [10, 20, 30])
+                self.assert_list(SinglyLinkedList(source), [10, 20])
+        self.assert_list(SinglyLinkedList("ab"), ["a", "b"])
+        for source in (None, 10):
+            with self.subTest(source=source):
+                with self.assertRaises(TypeError):
+                    SinglyLinkedList(source)
+
+    def test_constructor_creates_independent_nodes(self) -> None:
+        payload = {"score": 10}
+        original = SinglyLinkedList([payload, 20])
+        copy = SinglyLinkedList(original)
+        before = self.assert_list(original, [payload, 20])
+        copied = self.assert_list(copy, [payload, 20])
+        self.assertTrue({id(n) for n in before}.isdisjoint(id(n) for n in copied))
+        self.assertIs(copy[0], payload)
+        copy.append(30)
+        self.assert_list(original, [payload, 20])
+        self.assert_list(copy, [payload, 20, 30])
 
     def test_prepend(self) -> None:
         linked = SinglyLinkedList()
@@ -84,7 +91,7 @@ class TestLinkedList(unittest.TestCase):
 
     def test_insert(self) -> None:
         for values in ([], [10], [10, 20, 30]):
-            for index in range(-6, 7):
+            for index in (-99, *range(-6, 7), 99):
                 with self.subTest(values=values, index=index):
                     linked = SinglyLinkedList(values)
                     expected = values.copy()
@@ -94,37 +101,58 @@ class TestLinkedList(unittest.TestCase):
 
     def test_extend(self) -> None:
         for initial in ([], [10]):
-            for extra in ([], [20, 30]):
+            for extra in ([], [20, 30], [None]):
                 with self.subTest(initial=initial, extra=extra):
                     linked = SinglyLinkedList(initial)
                     self.assertIsNone(linked.extend(extra))
                     self.assert_list(linked, initial + extra)
 
     def test_extend_accepts_iterables(self) -> None:
-        sources = ((20, 30), (x for x in [20, 30]), SinglyLinkedList([20, 30]))
-        for source in sources:
+        for source in ((20, 30), (x for x in (20, 30)), SinglyLinkedList([20, 30])):
             with self.subTest(source_type=type(source).__name__):
                 linked = SinglyLinkedList([10])
                 self.assertIsNone(linked.extend(source))
                 self.assert_list(linked, [10, 20, 30])
+        linked = SinglyLinkedList()
+        linked.extend("ab")
+        self.assert_list(linked, ["a", "b"])
 
     def test_extend_self(self) -> None:
-        for values in ([], [10, 20, 30]):
+        for values in ([], [10], [10, 20, 30]):
             with self.subTest(values=values):
                 linked = SinglyLinkedList(values)
-                original_append = linked.append
+                before = self.assert_list(linked, values)
+                append = linked.append
                 calls = 0
-
-                # Catch the common endless self-extension bug before it fills RAM.
                 def guarded_append(value):
                     nonlocal calls
                     calls += 1
                     self.assertLessEqual(calls, len(values), "Endless self-extension")
-                    return original_append(value)
-
+                    return append(value)
                 with patch.object(linked, "append", side_effect=guarded_append):
                     self.assertIsNone(linked.extend(linked))
-                self.assert_list(linked, values + values)
+                after = self.assert_list(linked, values + values)
+                self.assertEqual(after[:len(values)], before)
+                self.assertTrue({id(n) for n in before}.isdisjoint(
+                    id(n) for n in after[len(values):]))
+
+    def test_extend_rejects_non_iterables(self) -> None:
+        for source in (None, 10):
+            with self.subTest(source=source):
+                linked = SinglyLinkedList([10])
+                with self.assertRaises(TypeError):
+                    linked.extend(source)
+                self.assert_list(linked, [10])
+
+    def test_extend_keeps_values_yielded_before_iterator_failure(self) -> None:
+        def failing_source():
+            yield 20
+            raise RuntimeError("source failed")
+
+        linked = SinglyLinkedList([10])
+        with self.assertRaisesRegex(RuntimeError, "source failed"):
+            linked.extend(failing_source())
+        self.assert_list(linked, [10, 20])
 
     def test_pop_default(self) -> None:
         linked = SinglyLinkedList([10, 20, 30])
@@ -135,16 +163,25 @@ class TestLinkedList(unittest.TestCase):
             linked.pop()
         self.assert_list(linked, [])
 
-    def test_pop_indexed(self) -> None:
-        for values in ([10], [10, 20, 30]):
+    def test_pop_indexed_and_detaches_node(self) -> None:
+        for values in ([10], [10, 20, 30], list(range(8))):
             for index in range(-len(values), len(values)):
                 with self.subTest(values=values, index=index):
                     linked = SinglyLinkedList(values)
                     expected = values.copy()
+                    nodes = self.assert_list(linked, expected)
+                    removed = nodes[index]
                     self.assertEqual(linked.pop(index), expected.pop(index))
+                    self.assertIsNone(removed.next)
                     self.assert_list(linked, expected)
-                    linked.append(99)  # Also expose a stale tail after removal.
+                    linked.append(99)
                     self.assert_list(linked, expected + [99])
+
+    def test_pop_returns_original_value_not_node(self) -> None:
+        payload = {"score": 10}
+        linked = SinglyLinkedList([payload])
+        self.assertIs(linked.pop(), payload)
+        self.assert_list(linked, [])
 
     def test_remove(self) -> None:
         cases = (
@@ -154,6 +191,7 @@ class TestLinkedList(unittest.TestCase):
             ([10, 20, 30], 30, [10, 20]),
             ([10, 20, 20, 30], 20, [10, 20, 30]),
             ([None, 10], None, [10]),
+            ([0, 10], 0, [10]),
         )
         for initial, value, expected in cases:
             with self.subTest(initial=initial, value=value):
@@ -161,48 +199,61 @@ class TestLinkedList(unittest.TestCase):
                 self.assertIsNone(linked.remove(value))
                 self.assert_list(linked, expected)
 
-    def test_missing_values(self) -> None:
-        for values in ([], [10, 20]):
+    def test_remove_missing_raises_without_mutation(self) -> None:
+        for values in ([], [10], [10, 20]):
             with self.subTest(values=values):
                 linked = SinglyLinkedList(values)
-                self.assertIsNone(linked.index(99))
-                self.assert_list(linked, values)
+                before = self.assert_list(linked, values)
                 with self.assertRaises(ValueError):
                     linked.remove(99)
-                self.assert_list(linked, values)
+                self.assertEqual(self.assert_list(linked, values), before)
 
-    def test_clear(self) -> None:
+    def test_clear_detaches_nodes_and_is_repeatable(self) -> None:
         for values in ([], [10], [10, 20, 30]):
             with self.subTest(values=values):
                 linked = SinglyLinkedList(values)
-                for _ in range(2):  # Repeated clearing must also be safe.
-                    self.assertIsNone(linked.clear())
-                    self.assert_list(linked, [])
+                nodes = self.assert_list(linked, values)
+                self.assertIsNone(linked.clear())
+                self.assert_list(linked, [])
+                for node in nodes:
+                    self.assertIsNone(node.next)
+                self.assertIsNone(linked.clear())
+                linked.append(99)
+                self.assert_list(linked, [99])
 
     def test_reuse_after_becoming_empty(self) -> None:
-        actions = {
-            "pop_last": lambda linked: linked.pop(),
-            "pop_first": lambda linked: linked.pop(0),
-            "remove": lambda linked: linked.remove(10),
-            "clear": lambda linked: linked.clear(),
-            "delete": lambda linked: linked.__delitem__(0),
-        }
-        for name, action in actions.items():
-            with self.subTest(operation=name):
+        for operation in ("pop", "remove", "delete", "clear"):
+            with self.subTest(operation=operation):
                 linked = SinglyLinkedList([10])
-                action(linked)
+                if operation == "pop":
+                    linked.pop(0)
+                elif operation == "remove":
+                    linked.remove(10)
+                elif operation == "delete":
+                    del linked[0]
+                else:
+                    linked.clear()
                 self.assert_list(linked, [])
-                linked.append(20)
-                linked.prepend(5)
+                linked.prepend(20)
                 linked.append(30)
-                self.assert_list(linked, [5, 20, 30])
+                self.assert_list(linked, [20, 30])
 
     def test_index(self) -> None:
-        values = [10, 20, 20, 30, None]
+        values = [10, 20, 20, 30, None, 0]
         linked = SinglyLinkedList(values)
-        for value, expected in ((10, 0), (20, 1), (30, 3), (None, 4)):
+        for value, expected in ((10, 0), (20, 1), (30, 3), (None, 4), (0, 5)):
             with self.subTest(value=value):
-                self.assertEqual(linked.index(value), expected)
+                position = linked.index(value)
+                self.assertIs(type(position), int)
+                self.assertEqual(position, expected)
+                self.assert_list(linked, values)
+
+    def test_index_missing_returns_none(self) -> None:
+        for values in ([], [10], [10, 20]):
+            with self.subTest(values=values):
+                linked = SinglyLinkedList(values)
+                self.assertIsNone(linked.index(99))
+                self.assertIsNone(linked.index(None))
                 self.assert_list(linked, values)
 
     def test_count(self) -> None:
@@ -210,9 +261,11 @@ class TestLinkedList(unittest.TestCase):
         linked = SinglyLinkedList(values)
         for value, expected in ((10, 1), (20, 2), (None, 1), (99, 0)):
             with self.subTest(value=value):
-                self.assertEqual(linked.count(value), expected)
-                self.assert_list(linked, values)
+                count = linked.count(value)
+                self.assertIs(type(count), int)
+                self.assertEqual(count, expected)
         self.assertEqual(SinglyLinkedList().count(10), 0)
+        self.assert_list(linked, values)
 
     def test_contains(self) -> None:
         linked = SinglyLinkedList([10, 20, None])
@@ -223,16 +276,23 @@ class TestLinkedList(unittest.TestCase):
         self.assertNotIn(10, SinglyLinkedList())
         self.assert_list(linked, [10, 20, None])
 
-    def test_searches_use_value_equality(self) -> None:
-        stored = {"score": 10}
-        equal_value = {"score": 10}  # Equal, but not the same object.
+    def test_searches_use_identity_or_equality(self) -> None:
+        stored, query = {"score": 10}, {"score": 10}
+        self.assertIsNot(stored, query)
         linked = SinglyLinkedList([stored])
-        self.assertIsNot(stored, equal_value)
-        self.assertIn(equal_value, linked)
-        self.assertEqual(linked.index(equal_value), 0)
-        self.assertEqual(linked.count(equal_value), 1)
-        self.assertIsNone(linked.remove(equal_value))
+        self.assertIn(query, linked)
+        self.assertEqual(linked.index(query), 0)
+        self.assertEqual(linked.count(query), 1)
+        self.assertIsNone(linked.remove(query))
         self.assert_list(linked, [])
+        value = float("nan")
+        linked = SinglyLinkedList([value, value])
+        self.assertIn(value, linked)
+        self.assertEqual(linked.index(value), 0)
+        self.assertEqual(linked.count(value), 2)
+        self.assertIsNone(linked.index(float("nan")))
+        linked.remove(value)
+        self.assert_list(linked, [value])
 
     def test_reverse(self) -> None:
         for values in ([], [10], [10, 20, 30], [10, 20, 10]):
@@ -240,15 +300,10 @@ class TestLinkedList(unittest.TestCase):
                 original = SinglyLinkedList(values)
                 before = self.assert_list(original, values)
                 result = original.reverse()
-
                 self.assertIsNot(result, original)
-                result_nodes = self.assert_list(result, values[::-1])
-                after = self.assert_list(original, values)
-                self.assertEqual([id(n) for n in before], [id(n) for n in after])
-                self.assertTrue(
-                    {id(n) for n in before}.isdisjoint(id(n) for n in result_nodes),
-                    "The original and reversed lists must not share nodes",
-                )
+                copied = self.assert_list(result, values[::-1])
+                self.assertEqual(self.assert_list(original, values), before)
+                self.assertTrue({id(n) for n in before}.isdisjoint(id(n) for n in copied))
 
     def test_reverse_structures_are_independent(self) -> None:
         original = SinglyLinkedList([10, 20, 30])
@@ -267,7 +322,7 @@ class TestLinkedList(unittest.TestCase):
         result = original.reverse()
         self.assertIs(result[0], second)
         self.assertIs(result[1], first)
-        result[0]["score"] = 99  # Mutate the shared value, not a node.
+        result[0]["score"] = 99
         self.assert_list(original, [{"score": 10}, {"score": 99}])
         self.assert_list(result, [{"score": 99}, {"score": 10}])
 
@@ -275,7 +330,7 @@ class TestLinkedList(unittest.TestCase):
         linked = SinglyLinkedList()
         self.assertEqual(len(linked), 0)
         self.assertFalse(linked)
-        linked.append(0)  # A false-valued element still makes the list nonempty.
+        linked.append(0)
         self.assertEqual(len(linked), 1)
         self.assertTrue(linked)
         linked.prepend(10)
@@ -288,12 +343,11 @@ class TestLinkedList(unittest.TestCase):
         for values in ([], [10], [10, 20, 30]):
             with self.subTest(values=values):
                 linked = SinglyLinkedList(values)
-                for _ in range(2):  # Each new iterator starts at the head.
-                    iterator = iter(linked)
-                    for value in values:
-                        self.assertEqual(next(iterator), value)
-                    with self.assertRaises(StopIteration):
-                        next(iterator)
+                iterator = iter(linked)
+                self.assertIs(iter(iterator), iterator)
+                for value in values:
+                    self.assertEqual(next(iterator), value)
+                for _ in range(2):
                     with self.assertRaises(StopIteration):
                         next(iterator)
                 self.assert_list(linked, values)
@@ -309,21 +363,24 @@ class TestLinkedList(unittest.TestCase):
         self.assert_list(linked, [10, 20, 30])
 
     def test_getitem(self) -> None:
-        values = [10, 20, 30]
-        linked = SinglyLinkedList(values)
-        for index in range(-3, 3):
-            with self.subTest(index=index):
-                self.assertEqual(linked[index], values[index])
-                self.assert_list(linked, values)
+        for values in ([10], [10, 20, 30], list(range(8))):
+            linked = SinglyLinkedList(values)
+            for index in range(-len(values), len(values)):
+                with self.subTest(values=values, index=index):
+                    self.assertEqual(linked[index], values[index])
+            self.assert_list(linked, values)
 
-    def test_setitem(self) -> None:
+    def test_setitem_preserves_nodes(self) -> None:
         for index in range(-3, 3):
             with self.subTest(index=index):
                 linked = SinglyLinkedList([10, 20, 30])
+                before = self.assert_list(linked, [10, 20, 30])
                 expected = [10, 20, 30]
                 expected[index] = 99
                 linked[index] = 99
-                self.assert_list(linked, expected)
+                self.assertEqual(self.assert_list(linked, expected), before)
+                self.assertIsNone(linked.__setitem__(index, 99))
+                self.assertEqual(self.assert_list(linked, expected), before)
 
     def test_delitem(self) -> None:
         for values in ([10], [10, 20, 30]):
@@ -334,18 +391,22 @@ class TestLinkedList(unittest.TestCase):
                     del expected[index]
                     del linked[index]
                     self.assert_list(linked, expected)
+        linked = SinglyLinkedList([10])
+        self.assertIsNone(linked.__delitem__(0))
+        self.assert_list(linked, [])
 
     def test_repr(self) -> None:
         for values in ([], [10], [10, 20, 30], ["hello", None]):
             with self.subTest(values=values):
                 linked = SinglyLinkedList(values)
-                self.assert_list(linked, values)
                 self.assertEqual(repr(linked), f"LinkedList({values!r})")
+                self.assert_list(linked, values)
 
     def test_repr_handles_self_reference(self) -> None:
         linked = SinglyLinkedList()
         linked.append(linked)
         self.assertEqual(repr(linked), "LinkedList([...])")
+        linked.clear()
 
     def test_normalize_index(self) -> None:
         linked = SinglyLinkedList([10, 20, 30])
@@ -357,57 +418,103 @@ class TestLinkedList(unittest.TestCase):
 
     def test_normalize_index_for_insert(self) -> None:
         linked = SinglyLinkedList([10, 20, 30])
-        cases = ((-10, 0), (-3, 0), (-2, 1), (-1, 2), (0, 0), (2, 2), (3, 3), (10, 3))
+        cases = ((-99, 0), (-3, 0), (-2, 1), (-1, 2), (0, 0), (2, 2), (3, 3), (99, 3))
         for index, expected in cases:
             with self.subTest(index=index):
                 self.assertEqual(linked._normalize_index(index, for_insert=True), expected)
         empty = SinglyLinkedList()
-        for index in (-10, -1, 0, 1, 10):
+        for index in (-99, -1, 0, 1, 99):
             with self.subTest(empty_index=index):
                 self.assertEqual(empty._normalize_index(index, for_insert=True), 0)
         self.assert_list(linked, [10, 20, 30])
         self.assert_list(empty, [])
 
     def test_node_at(self) -> None:
-        linked = SinglyLinkedList([10, 20, 30])
-        nodes = self.assert_list(linked, [10, 20, 30])
-        for index in range(-3, 3):
-            with self.subTest(index=index):
-                self.assertIs(linked._node_at(index), nodes[index])
-        self.assert_list(linked, [10, 20, 30])
+        for values in ([10], [10, 20], [10, 20, 30], list(range(8))):
+            linked = SinglyLinkedList(values)
+            nodes = self.assert_list(linked, values)
+            for index in range(-len(values), len(values)):
+                with self.subTest(values=values, index=index):
+                    self.assertIs(linked._node_at(index), nodes[index])
+            self.assert_list(linked, values)
 
     def test_invalid_indices(self) -> None:
-        actions = {
-            "getitem": lambda linked, i: linked[i],
-            "setitem": lambda linked, i: linked.__setitem__(i, 99),
-            "delitem": lambda linked, i: linked.__delitem__(i),
-            "pop": lambda linked, i: linked.pop(i),
-            "normalize": lambda linked, i: linked._normalize_index(i),
-            "node_at": lambda linked, i: linked._node_at(i),
-        }
-        invalid_types = (None, "1", 1.5, slice(None))
-        for values in ([], [10, 20, 30]):
-            invalid_bounds = (-len(values) - 1, len(values), -99, 99)
-            for error, indices in ((IndexError, invalid_bounds), (TypeError, invalid_types)):
-                for index in indices:
-                    for name, action in actions.items():
-                        with self.subTest(values=values, index=index, operation=name):
-                            linked = SinglyLinkedList(values)
-                            with self.assertRaises(error):
-                                action(linked, index)
-                            self.assert_list(linked, values)
+        for values in ([], [10], [10, 20, 30]):
+            for index in (-len(values) - 1, len(values), -99, 99):
+                with self.subTest(values=values, index=index):
+                    linked = SinglyLinkedList(values)
+                    with self.assertRaises(IndexError):
+                        linked[index]
+                    with self.assertRaises(IndexError):
+                        linked[index] = 99
+                    with self.assertRaises(IndexError):
+                        del linked[index]
+                    with self.assertRaises(IndexError):
+                        linked.pop(index)
+                    with self.assertRaises(IndexError):
+                        linked._normalize_index(index)
+                    with self.assertRaises(IndexError):
+                        linked._node_at(index)
+                    self.assert_list(linked, values)
 
-    def test_insert_rejects_invalid_types(self) -> None:
+    def test_invalid_index_types_and_slices(self) -> None:
         for values in ([], [10, 20, 30]):
-            for index in (None, "1", 1.5, slice(None)):
+            for index in (None, "1", 1.5, [], {}, slice(None), slice(0, 2)):
                 with self.subTest(values=values, index=index):
                     linked = SinglyLinkedList(values)
                     with self.assertRaises(TypeError):
+                        linked[index]
+                    with self.assertRaises(TypeError):
+                        linked[index] = 99
+                    with self.assertRaises(TypeError):
+                        del linked[index]
+                    with self.assertRaises(TypeError):
+                        linked.pop(index)
+                    with self.assertRaises(TypeError):
                         linked.insert(index, 99)
-                    self.assert_list(linked, values)
+                    with self.assertRaises(TypeError):
+                        linked._normalize_index(index)
                     with self.assertRaises(TypeError):
                         linked._normalize_index(index, for_insert=True)
+                    with self.assertRaises(TypeError):
+                        linked._node_at(index)
                     self.assert_list(linked, values)
+
+    def test_boolean_indices(self) -> None:
+        linked = SinglyLinkedList([10, 20])
+        self.assertEqual(linked[False], 10)
+        self.assertEqual(linked[True], 20)
+        linked[True] = 30
+        self.assert_list(linked, [10, 30])
+        linked.insert(True, 20)
+        self.assert_list(linked, [10, 20, 30])
+        self.assertEqual(linked.pop(False), 10)
+        self.assert_list(linked, [20, 30])
+        del linked[True]
+        self.assert_list(linked, [20])
+
+    def test_mixed_operations(self) -> None:
+        linked = SinglyLinkedList()
+        linked.append(20)
+        self.assert_list(linked, [20])
+        linked.prepend(10)
+        self.assert_list(linked, [10, 20])
+        linked.insert(1, 15)
+        self.assert_list(linked, [10, 15, 20])
+        linked.extend([30, 40])
+        self.assert_list(linked, [10, 15, 20, 30, 40])
+        self.assertEqual(linked.pop(-2), 30)
+        self.assert_list(linked, [10, 15, 20, 40])
+        linked.remove(15)
+        self.assert_list(linked, [10, 20, 40])
+        linked[-1] = 50
+        self.assert_list(linked, [10, 20, 50])
+        del linked[0]
+        self.assert_list(linked, [20, 50])
+        self.assert_list(linked.reverse(), [50, 20])
+        self.assert_list(linked, [20, 50])
+        linked.clear()
+        self.assert_list(linked, [])
 
 
 if __name__ == "__main__":

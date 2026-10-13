@@ -1,43 +1,21 @@
-# Linked lists — quick reference
+# Linked lists
 
 Two independent, noncircular implementations with the same public API:
 `LinkedList` (singly) and `DoublyLinkedList` (doubly). Python 3.10+; standard library only.
 
-## Files and running
-
-```text
-linked_list/                 # Place under data_structures/ in your repository.
-├── __init__.py
-├── node.py                  # Node(value, next=None)
-├── linkedlist.py            # LinkedList
-├── doublynode.py            # DoublyNode(value, next=None, prev=None)
-├── doublylinkedlist.py      # DoublyLinkedList
-├── test_cases.json          # Shared input/output snapshots
-├── tests.py                 # Shared tests + structure-specific checks
-└── README.md
-```
-
 Keep your working singly implementation to test it; the supplied `linkedlist.py`
 is a reference to compare/merge. Node constructors assign references; list
 methods maintain reciprocal links.
-
-```bash
-# Inside this directory:
-python3 tests.py
-python3 tests.py TestSinglyLinkedList
-python3 tests.py TestDoublyLinkedList
-python3 tests.py TestDoublyLinkedList.test_json_snapshots
-
-# Alternatively, from AlgorithmsAndDataStructures/:
-python3 data_structures/linked_list/tests.py
-python3 -m data_structures.linked_list.tests
-```
 
 Tests use the existing repository helper `utils.load_test_cases`; keep this folder
 under `data_structures/`. The runner adds the repository root to `sys.path`.
 Package mode requires the underscore spelling `data_structures`. When retaining
 your own code, keep the conditional sibling imports for both execution modes.
 Discovery: `python3 -m unittest discover -s data_structures/linked_list -p 'tests.py'`.
+
+## Run Tests
+1. Run Singly Linked List Tests - from ```/data_structures/linked_lists``` run ```python3 ./singly_linked/tests.py```
+2. Run Doubly Linked List Tests - from ```/data_structures/linked_lists``` run ```python3 ./doubly_linked/tests.py```
 
 ## Structure and invariants
 
