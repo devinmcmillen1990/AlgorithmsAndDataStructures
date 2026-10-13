@@ -1,8 +1,8 @@
-<h1>2. Greedy Solution that explicitly consumes )) Pairs</h2>
+# 2. Greedy Solution that explicitly consumes ```))``` Pairs
 
 [Back to Problem](../LC_1541_MinimumInsertionsToBalanceParenthesesString.md)
 
-<h2>Idea</h2>
+## Idea
 
 Maintain ```open_count``` - number of unmatched opening parentheses
 
@@ -10,7 +10,7 @@ Whenever we encounter ```)```:
 1. Consume ```))``` when the next character is also ```)```. Otherwise, insert its missing partner
 2. Match that closing pair with an available ```(```. When no opening is available, insert one.
 
-<h2>Code</h2>
+## Code
 
 ```python
 class Solution:
@@ -36,15 +36,15 @@ class Solution:
 
 ```
 
-<h2>Time Complexity : </h2> 
+## Time Complexity
 
 <strong>O(n)</strong>, because each character is processed once
 
-<h2>Space Complexity : </h2> 
+## Space Complexity
 
 <strong>O(1)</strong>, only counters are storing data
 
-<h2>Categories</h2>
+## Categories
 
 <ul>
     <li>Array</li>

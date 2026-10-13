@@ -1,8 +1,8 @@
-<h1>1. Counting Open and Closed Parentheses</h2>
+# 1. Counting Open and Closed Parentheses
 
 [Back to Problem](../LC_921_MinimumAddToMakeParenthesesValid.md)
 
-<h2>Idea</h2>
+## Idea
 
 Everytime we encounter a '(' then we increment the ```unmatched_open```.
 
@@ -13,7 +13,7 @@ Return the sum of ```missing_open``` and ```unmatched_open``` counted.
 
 Assume every character is either '(' or ')' from the problem.
 
-<h2>Code</h2>
+## Code
 
 ```python
 class Solution:
@@ -29,15 +29,15 @@ class Solution:
         return missing_open + unmatched_open
 ```
 
-<h2>Time Complexity : </h2> 
+## Time Complexity
 
 <strong>O(n)</strong>, because each character is processed once
 
-<h2>Space Complexity : </h2> 
+## Space Complexity
 
 <strong>O(h)</strong>, where 'h' is the maximum nesting depth; O(n) in the worst case
 
-<h2>Categories</h2>
+## Categories
 
 <ul>
     <li>Array</li>
