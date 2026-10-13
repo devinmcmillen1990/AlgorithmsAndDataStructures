@@ -4,27 +4,27 @@ from reprlib import recursive_repr
 from typing import Any
 
 
-from data_structures.linked_lists.singly_linked.node import SinglyLinkedNode
+from .node import Node
 
 
 class SinglyLinkedList:
 
     def __init__(self, values:Iterable[Any]=()) -> None:
-        self._head: SinglyLinkedNode|None = None
-        self._tail: SinglyLinkedNode|None = None
+        self._head: Node|None = None
+        self._tail: Node|None = None
         self._size = 0
         for value in values:
             self.append(value=value)
 
     def prepend(self, value: Any) -> None:
-        node = SinglyLinkedNode(value=value, next=self._head)
+        node = Node(value=value, next=self._head)
         self._head = node
         if self._tail is None:
             self._tail = node
         self._size += 1
 
     def append(self, value: Any) -> None:
-        node = SinglyLinkedNode(value=value, next=None)
+        node = Node(value=value, next=None)
         if self._tail is None:
             self._head = node
         else:
@@ -40,7 +40,7 @@ class SinglyLinkedList:
             self.append(value=value)
         else:
             previous = self._node_at(index-1)
-            previous.next = SinglyLinkedNode(value=value, next=previous.next)
+            previous.next = Node(value=value, next=previous.next)
             self._size += 1
 
     def extend(self, values: Iterable[Any]) -> None:
@@ -108,7 +108,7 @@ class SinglyLinkedList:
             raise IndexError("linked list index out of range")
         return index if index >= 0 else index + self._size
 
-    def _node_at(self, index: int) -> SinglyLinkedNode:
+    def _node_at(self, index: int) -> Node:
         index = self._normalize_index(index=index)
         if index == (self._size-1): 
             return self._tail

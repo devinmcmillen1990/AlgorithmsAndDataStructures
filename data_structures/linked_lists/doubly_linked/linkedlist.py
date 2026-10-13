@@ -4,20 +4,20 @@ from collections.abc import Iterable, Iterator
 from reprlib import recursive_repr
 from typing import Any
 
-from doubly_linked.node import DoublyLinkedNode
+from .node import Node
 
 
 class DoublyLinkedList:
 
-    def __init__(self, values: Iterator[Any]) -> None:
-        self._head: DoublyLinkedNode|None = None
-        self._tail: DoublyLinkedNode|None = None
+    def __init__(self, values: Iterator[Any]=()) -> None:
+        self._head: Node|None = None
+        self._tail: Node|None = None
         self._size = 0
         for value in values:
             self.append(value=value)
 
     def prepend(self, value: Any) -> None:
-        node = DoublyLinkedNode(value=value, next=self._head)
+        node = Node(value=value, next=self._head)
         if self._head is None:
             self._tail = node
         else:
@@ -26,7 +26,7 @@ class DoublyLinkedList:
         self._size += 1
 
     def append(self, value: Any) -> None:
-        node = DoublyLinkedNode(value=value, prev=self._tail)
+        node = Node(value=value, prev=self._tail)
         if self._tail is None:
             self._head = node
         else:
@@ -44,7 +44,7 @@ class DoublyLinkedList:
             following = self._node_at(index=index)
             previous = following.prev
             assert previous is not None
-            node = DoublyLinkedNode(value=value, next=following, prev=previous)
+            node = Node(value=value, next=following, prev=previous)
             previous.next = node
             following.prev = node
             self._size += 1
@@ -101,7 +101,7 @@ class DoublyLinkedList:
 
     def _normalize_index(self, index: int, *, for_insert: bool = False) -> int:
         if not isinstance(index, int):
-            raise ValueError("index must be an integer; slicing is not supported")
+            raise TypeError("index must be an integer; slicing is not supported")
         if for_insert:
             if index < 0:
                 index += self._size
@@ -110,7 +110,7 @@ class DoublyLinkedList:
             raise IndexError("linked list index out of range")
         return index if index >= 0 else index + self._size
 
-    def _node_at(self, index: int) -> DoublyLinkedNode:
+    def _node_at(self, index: int) -> Node:
         index = self._normalize_index(index=index)
         if index < self._size // 2:
             node = self._head
@@ -152,7 +152,7 @@ class DoublyLinkedList:
     def __delitem__(self, index: int) -> None:
         self.pop(index=index)
 
-    @recursive_repr
+    @recursive_repr()
     def __repr__(self):
         return f"DoublyLinkedList({list(self)!r})"
         
