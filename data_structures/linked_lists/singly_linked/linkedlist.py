@@ -4,7 +4,7 @@ from reprlib import recursive_repr
 from typing import Any
 
 
-from node import Node
+from data_structures.linked_lists.singly_linked.node import Node
 
 
 class LinkedList:
