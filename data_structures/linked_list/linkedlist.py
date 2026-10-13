@@ -10,8 +10,8 @@ from node import Node
 class LinkedList:
 
     def __init__(self, values:Iterable[Any]=()) -> None:
-        self._head: Node|Node=None
-        self._tail: Node|Node=None
+        self._head: Node|None = None
+        self._tail: Node|None = None
         self._size = 0
         for value in values:
             self.append(value=value)
@@ -19,7 +19,7 @@ class LinkedList:
     def prepend(self, value: Any) -> None:
         node = Node(value=value, next=self._head)
         self._head = node
-        if self.tail is None:
+        if self._tail is None:
             self._tail = node
         self._size += 1
 
@@ -33,10 +33,10 @@ class LinkedList:
         self._size += 1
 
     def insert(self, index: int, value: Any) -> None:
-        index = self._normalize_index(index=index)
+        index = self._normalize_index(index=index, for_insert=True)
         if index == 0:
             self.prepend(value=value)
-        elif index == (self._size-1):
+        elif index == self._size:
             self.append(value=value)
         else:
             previous = self._node_at(index-1)
@@ -44,27 +44,25 @@ class LinkedList:
             self._size += 1
 
     def extend(self, values: Iterable[Any]) -> None:
-        if values is None:
-            return
+        if values is self:
+            values = list(self)
         for value in values:
             self.append(value=value)
 
-    def index(self, value: Any) -> int:
-        if value is None: 
-            return -1
+    def index(self, value: Any) -> int | None:
         node = self._head
         index = 0
         while node is not None:
-            if node.value == value:
+            if node.value is value or node.value == value:
                 return index
             index += 1
             node = node.next
-        return -1
+        return None
 
     def count(self, value: Any) -> int:
         return sum(1 for item in self if item is value or item == value)
 
-    def pop(self, index: int=0) -> Node:
+    def pop(self, index: int=-1) -> Any:
         index = self._normalize_index(index=index)
         if index == 0:
             node = self._head
@@ -81,10 +79,12 @@ class LinkedList:
                 self._tail = previous
         self._size -= 1
         node.next = None    # Detach from Linked List                       
-        return node
+        return node.value
 
     def remove(self, value: Any) -> None:
         index = self.index(value=value)
+        if index is None:
+            raise ValueError(f'{value!r} is not in the linked list')
         self.pop(index=index)
 
     def clear(self) -> None:
@@ -97,12 +97,16 @@ class LinkedList:
             reversed_list.prepend(value=value)
         return reversed_list
 
-    def _normalize_index(self, index: int) -> int:
-        if not isinstance(index, int): 
+    def _normalize_index(self, index: int, *, for_insert: bool = False) -> int:
+        if not isinstance(index, int):
             raise TypeError("index must be an integer; slicing is not supported")
-        if index < -(self._size) or index >= self._size: 
+        if for_insert:
+            if index < 0:
+                index += self._size
+            return max(0, min(index, self._size))               # Allow insertion at positions 0 through size, inclusive.
+        if index < -self._size or index >= self._size:          # Reading/removing requires an existing element.
             raise IndexError("linked list index out of range")
-        return index if index >= 0 else (index + self._size)
+        return index if index >= 0 else index + self._size
 
     def _node_at(self, index: int) -> Node:
         index = self._normalize_index(index=index)
@@ -112,6 +116,7 @@ class LinkedList:
         while index > 0:
             assert node is not None
             node = node.next
+            index -= 1
         assert node is not None
         return node
 
@@ -128,7 +133,7 @@ class LinkedList:
         return any(item is value or item == value for item in self)
 
     def __getitem__(self, index: int) -> Any:
-        return self._node_at(index=index)
+        return self._node_at(index=index).value
 
     def __setitem__(self, index: int, value: Any) -> None:
         self._node_at(index=index).value = value
