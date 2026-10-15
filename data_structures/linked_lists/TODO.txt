@@ -1,0 +1,2 @@
+LinkedLists.md
+1. remove practice problems section and replace with links to the problems that we have
