@@ -42,11 +42,8 @@ class Solution:
 <strong>O(1)</strong>, only counters are storing data
 
 ## Categories
-
-<ul>
-    <li>Array</li>
-    <li>Strings</li>
-    <li>Greedy</li>
-</ul>
+- Array
+- Strings
+- Greedy
 
 [Back to Problem](../LC_1541_MinimumInsertionsToBalanceParenthesesString.md)

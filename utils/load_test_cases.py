@@ -12,4 +12,3 @@ def _validate_test_cases(path, cases):
     for number, case in enumerate(cases, start=1):
         if not isinstance(case, dict):              raise ValueError(f"Case {number} must be a JSON object.")
         if not isinstance(case.get("name"), str):   raise ValueError(f"Case {number} needs an str 'name'.")
-        if type(case.get("expected")) is not int:   raise ValueError(f"Case {number} needs an int 'expected'")
